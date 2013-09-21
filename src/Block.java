@@ -1,4 +1,6 @@
-
-public class Block extends Actor {
-
+public class Block extends Obstacle {
+		
+	public static void main(String[] args) {
+		
+	}
 }
