@@ -14,7 +14,7 @@ public class TerpJump extends JFrame implements Runnable {
 	public TerpJump() {
 		super("TerpJump");
 		
-		world = new World(WIDTH, HEIGHT, 4);
+		world = new World(WIDTH, HEIGHT, 3);
 		this.add(world);
 		
 		setVisible(true);

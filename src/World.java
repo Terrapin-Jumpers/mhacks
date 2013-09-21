@@ -23,8 +23,8 @@ public class World extends JPanel{
 		this.width = width;
 		this.height = height;
 		
-		for(int i =1;i<=numPlayers;i++){
-			Player x =  new Player(100*i,height-100, i);
+		for(int i=1;i<=numPlayers;i++){
+			Player x =  new Player(100*(numPlayers-i),height-100, i);
 			players.add(x);
 			this.addChild(x);
 		}
