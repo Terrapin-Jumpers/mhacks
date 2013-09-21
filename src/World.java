@@ -1,7 +1,8 @@
 import java.awt.Graphics;
 import java.util.ArrayList;
+import javax.swing.JComponent;
 
-public class World {
+public class World extends JComponent {
 	public static ArrayList<Actor> actors = new ArrayList<Actor>();
 	
 	public void update() {

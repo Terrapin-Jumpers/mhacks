@@ -1,5 +1,7 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -15,7 +17,7 @@ abstract class Actor {
 	
 	protected int xSpeed = 0;
 	protected int ySpeed = 0;
-	
+	protected BufferedImage image;
 	public Actor(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -23,15 +25,14 @@ abstract class Actor {
 	
 	protected void initWithImage(String imagePath) {
 		this.imagePath = "images/" + imagePath;
-		InputStream in = getClass().getResourceAsStream(this.imagePath);
-		BufferedImage img;
 		try {
-			img = ImageIO.read(in);
-			height = img.getHeight();
-			width = img.getWidth();
+			image = ImageIO.read(new File(this.imagePath));
+			height = image.getHeight();
+			width = image.getWidth();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public void move() {
@@ -49,7 +50,7 @@ abstract class Actor {
 		return ySpeed;
 	}
 	public void paint(Graphics g) {
-		
+		g.drawImage(image, x, y, width, height, null);
 	}
 	
 	public int getX() {

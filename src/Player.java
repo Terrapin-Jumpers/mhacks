@@ -10,8 +10,8 @@ public class Player extends Actor {
 		score = 0;
 	}
 	
-	void move(int m) {
-		x += m;
+	public void move() {
+		x ++;
 	}
 	
 	void jump() {
