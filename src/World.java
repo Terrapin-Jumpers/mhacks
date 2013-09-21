@@ -13,7 +13,8 @@ public class World extends JPanel{
 	static final int GRID_SIZE = 32;
 
 	private int width;
-	private int height;	
+	private int height;
+	
 	private ArrayList<Player> players;
 
 	public World(int width, int height,int numPlayers) {
