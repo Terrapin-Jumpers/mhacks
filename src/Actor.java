@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 abstract class Actor {
 	protected int x;
@@ -16,10 +16,9 @@ abstract class Actor {
 	protected initWithImage(String imagePath) {
 		this.imagePath = "images/" + imagePath;
 		//build the Image based on the URL
-		InputStream in = getClass().getResourceAsStream(imagePath);
-		ImageIcon img = new ImageIcon(ImageIO.read(in));
-		height = img.getIconHeight();
-		width = img.getIconWidth();
+		BufferedImage img = ImageIO.read(this.imagePath);
+		height = img.getHeight();
+		width = img.getWidth();
 	}
 	
 	public void move() {
