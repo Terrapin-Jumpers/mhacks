@@ -9,8 +9,8 @@ public class World extends JPanel {
 	
 	static final int GRID_SIZE = 32;
 	
-	int width;
-	int height;
+	private int width;
+	private int height;
 	
 	private ArrayList <Player> players;
 	
@@ -18,6 +18,8 @@ public class World extends JPanel {
 	public World(int width, int height,int numPlayers) {
 		
 		players = new ArrayList<Player>(numPlayers);
+		this.width = width;
+		this.height = height;
 		
 		for(int i =1;i<=numPlayers;i++){
 			Player x =  new Player(100*i,height-100);
@@ -37,16 +39,18 @@ public class World extends JPanel {
 		
 		for (Actor a : actors){
 			a.move();
-			if(a instanceof Obstacle){
+			/*if(a instanceof Obstaclep){
 				a.getCollisionBox();
 				for(Player b : players){
 					b.willCollideWith(a);
 				}
-			}
+			}*/
 		}
 	}
 	
 	public void paint(Graphics g) {
+		super.paintComponents(g);
+		g.clearRect(0, 0, width, height);
 		for (Actor a : actors)
 			a.paint(g);
 	}
