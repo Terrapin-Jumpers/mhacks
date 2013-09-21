@@ -7,4 +7,7 @@
 		 initWithImage("Block.png");
 		 width = width*timesRepeated;
 	 }
+	 public void move(){
+		 x--;
+	 }
 }
