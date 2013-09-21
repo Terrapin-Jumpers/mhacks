@@ -13,13 +13,13 @@ public class TerpJump extends JFrame implements Runnable {
 	
 	public TerpJump() {
 		super("TerpJump");
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		this.setVisible(true);
-		this.setSize(WIDTH, HEIGHT);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		world = new World(WIDTH, HEIGHT,4);
+		
+		world = new World(WIDTH, HEIGHT, 4);
 		this.add(world);
+		
+		setVisible(true);
+		setSize(WIDTH, HEIGHT);
+		setLocationRelativeTo(null);
 	}
 
 	public static void main(String[] args) {
