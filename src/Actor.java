@@ -1,5 +1,8 @@
-import java.util.ArrayList;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 
 abstract class Actor {
 	
@@ -9,23 +12,25 @@ abstract class Actor {
 	protected int height;
 	private String imagePath;
 	
-	protected int xSpeed;
-	protected int ySpeed;
+	protected int xSpeed = 0;
+	protected int ySpeed = 0;
 	
-	public Actor(int x, int y,int xSpeed,int ySpeed) {
+	public Actor(int x, int y) {
 		this.x = x;
 		this.y = y;
-		
-		this.xSpeed = xSpeed;
-		this.ySpeed = ySpeed;
 	}
 	
-	protected initWithImage(String imagePath) {
+	protected void initWithImage(String imagePath) {
 		this.imagePath = "images/" + imagePath;
-		//build the Image based on the URL
-		BufferedImage img = ImageIO.read(this.imagePath);
-		height = img.getHeight();
-		width = img.getWidth();
+		InputStream in = getClass().getResourceAsStream(this.imagePath);
+		BufferedImage img;
+		try {
+			img = ImageIO.read(in);
+			height = img.getHeight();
+			width = img.getWidth();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void move() {
