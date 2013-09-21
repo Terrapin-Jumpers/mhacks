@@ -1,14 +1,11 @@
 public class Player extends Actor {
 	private boolean alive;
 	int score;
-	String pic;
 	
 	public Player(String img) {
+		super(5,5,img);
 		alive = true;
-		pic = img;
 		score = 0;
-		x = 5;
-		y = 5;
 	}
 	
 	void move(int m) {
@@ -16,10 +13,11 @@ public class Player extends Actor {
 	}
 	
 	void jump() {
+		int vSpeed = 10;
 		y += 5;
 	}
 	
-	void hitObstacle(Actor obs) {
+	void hitObstacle(Obstacle obs) {
 		score -= obs.damage;
 		x -= 5;
 	}
