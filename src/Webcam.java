@@ -42,8 +42,8 @@ public class Webcam {
 
 		System.out.println("Captured Frame Width " + frame.width());
 		
-		CascadeClassifier faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_frontalface.xml").getPath());
-	    Mat image = Highgui.imdecode(frame, 0);
+		//CascadeClassifier faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_frontalface.xml").getPath());
+	    //Mat image = Highgui.imdecode(frame, 0);
 		
 		Highgui.imwrite("camera.jpg", frame);
 		System.out.println("OK");
