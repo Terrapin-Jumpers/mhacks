@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +41,17 @@ abstract class Actor {
 		//direction
 		x+=xSpeed;
 		y+=ySpeed;
+	}
+	
+	//Finds the area over which the actor will travel
+	public Rectangle getCollisionBox(){
+		Rectangle rec = new Rectangle(((int) this.xSpeed+this.width), ((int) this.ySpeed+this.height));
+		return rec;
+	}
+	
+	//Finds if current actor is within another actors field of motion
+	public boolean willCollideWith(Actor other){
+		return (other.getCollisionBox().contains(this.getCollisionBox()));
 	}
 	
 	public float getXSpeed(){
