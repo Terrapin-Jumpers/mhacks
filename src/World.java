@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -69,7 +70,7 @@ public class World extends JPanel{
 		Graphics2D g2 = (Graphics2D)g;
         AffineTransform oldXform = g2.getTransform();
         g2.scale(3f, 3f);
-        
+        g2.setBackground(Color.DARK_GRAY);
 		g.clearRect(0, 0, width, height);
 		for (Actor a : actors)
 			a.paint(g);
