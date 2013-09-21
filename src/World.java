@@ -1,10 +1,11 @@
+import java.util.ArrayList;
 
 public class World {
 	public static ArrayList<Actor> actors = new ArrayList<Actor>();
 	
 	public void update() {
 		for (Actor a : actors)
-			a.update();
+			a.move();
 	}
 	
 	public void paint(Graphics g) {

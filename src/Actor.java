@@ -2,15 +2,22 @@ import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
 abstract class Actor {
+	
 	protected int x;
 	protected int y;
 	protected int width;
 	protected int height;
 	private String imagePath;
 	
-	public Actor(int x, int y) {
+	protected int xSpeed;
+	protected int ySpeed;
+	
+	public Actor(int x, int y,int xSpeed,int ySpeed) {
 		this.x = x;
 		this.y = y;
+		
+		this.xSpeed = xSpeed;
+		this.ySpeed = ySpeed;
 	}
 	
 	protected initWithImage(String imagePath) {
@@ -22,9 +29,19 @@ abstract class Actor {
 	}
 	
 	public void move() {
-		
+		//changes the x/y coordinate by how much the object is moving in either
+		//direction
+		x+=xSpeed;
+		y+=ySpeed;
 	}
 	
+	public int getXSpeed(){
+		return xSpeed;
+		
+	}
+	public int getYSpeed(){
+		return ySpeed;
+	}
 	public void paint(Graphics g) {
 		
 	}
