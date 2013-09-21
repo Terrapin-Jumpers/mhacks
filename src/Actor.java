@@ -1,28 +1,43 @@
-public class Actor {
-	
+import java.util.ArrayList;
+
+abstract class Actor {
 	protected int x;
 	protected int y;
+	protected int width;
+	protected int height;
 	private String imagePath;
 	
-	public Actor(int x, int y, String imagePath ){
+	public Actor(int x, int y) {
 		this.x = x;
-		this.y =y; 
-		this.imagePath = imagePath;
+		this.y = y;
 	}
 	
-	//gets x-coordinate 
-	public int getX(){
-		return x;
+	protected initWithImage(String imagePath) {
+		this.imagePath = "images/" + imagePath;
+		//build the Image based on the URL
+	}
+	
+	public void move() {
 		
 	}
-	public String getImagePath(){
-		return imagePath;
+	
+	public void paint(Graphics g) {
+		
 	}
-	//gets y-coordinate 
-	public int getY(){
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
 		return y;
 	}
-	public void move(){
-		
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
 	}
 }

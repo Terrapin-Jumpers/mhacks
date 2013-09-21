@@ -1,10 +1,12 @@
 public class Player extends Actor {
+	
 	private int PLAYER_X, PLAYER_Y = 5;
 	private boolean alive;
 	int score;
 	
-	public Player() {
-		super(PLAYER_X,PLAYER_Y,"images/Player.png");
+	public Player(int x, int y) {
+		super(x, y);
+		initWithImage("Player.png");
 		alive = true;
 		score = 0;
 	}
