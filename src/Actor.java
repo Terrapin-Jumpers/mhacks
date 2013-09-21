@@ -34,13 +34,7 @@ abstract class Actor {
 		}
 		
 	}
-	public Rectangle getCollisionBox(){
-		Rectangle r = new Rectangle((int)this.xSpeed+this.width, (int) this.ySpeed+this.height);
-		return r;
-	}
-	public boolean willCollideWith(Actor other){
-		return (other.getCollisionBox().contains(this.getCollisionBox()));
-	}
+	
 	public void move() {
 		//changes the x/y coordinate by how much the object is moving in either
 		//direction
