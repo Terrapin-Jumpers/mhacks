@@ -67,7 +67,7 @@ public class World extends JPanel{
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
         AffineTransform oldXform = g2.getTransform();
-        g2.scale(1.0f, 1.0f);
+        g2.scale(3f, 2.2f);
         
 		g.clearRect(0, 0, width, height);
 		for (Actor a : actors)
