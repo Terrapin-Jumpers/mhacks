@@ -2,8 +2,9 @@
 	 
 	 protected static final int DAMAGE = 100;
 	 
-	 public Block(int x, int y) {
+	 public Block(int x, int y, int timesRepeated) {
 		 super(x, y, DAMAGE);
 		 initWithImage("Block.png");
+		 width = width*timesRepeated;
 	 }
 }

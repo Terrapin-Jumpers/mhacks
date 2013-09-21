@@ -15,8 +15,8 @@ abstract class Actor {
 	protected int height;
 	private String imagePath;
 	
-	protected int xSpeed = 0;
-	protected int ySpeed = 0;
+	protected float xSpeed = 0;
+	protected float ySpeed = 0;
 	protected BufferedImage image;
 	public Actor(int x, int y) {
 		this.x = x;
@@ -42,11 +42,11 @@ abstract class Actor {
 		y+=ySpeed;
 	}
 	
-	public int getXSpeed(){
+	public float getXSpeed(){
 		return xSpeed;
 		
 	}
-	public int getYSpeed(){
+	public float getYSpeed(){
 		return ySpeed;
 	}
 	public void paint(Graphics g) {
