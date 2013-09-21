@@ -1,12 +1,13 @@
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 public class World extends JPanel{
-	public static ArrayList<Actor> actors = new ArrayList<Actor>();
+	public ArrayList<Actor> actors = new ArrayList<Actor>();
+	public ArrayList<Actor> garbage = new ArrayList<Actor>();
 	
 	public static final int SPEED = 1;
 	static final int GRID_SIZE = 32;
@@ -41,7 +42,7 @@ public class World extends JPanel{
 	
 	public void update() {
 		
-		for (Actor a : actors){
+		for (Actor a : actors) {
 			a.move();
 			//@todo need to fix this, can cause a delay in jumping
 			if (a instanceof Obstacle)
@@ -52,19 +53,37 @@ public class World extends JPanel{
 						p.fall();
 					}
 				}
+			
+			if (a.getX() + a.getWidth() < 0) {
+				garbage.add(a);
+			}
 		}
+		
+		for (Actor a : garbage)
+			actors.remove(a);
+		garbage.clear();
 	}
 	
 	public void paint(Graphics g) {
-		super.paintComponents(g);
+		Graphics2D g2 = (Graphics2D)g;
+        AffineTransform oldXform = g2.getTransform();
+        g2.scale(1.0f, 1.0f);
+        
 		g.clearRect(0, 0, width, height);
 		for (Actor a : actors)
 			a.paint(g);
+		
+		g2.setTransform(oldXform);
 	}
 	
 	public void addChild(Actor a) {
 		actors.add(a);
 	}
+	
+	public void removeChild(Actor a) {
+		actors.remove(a);
+	}
+	
 	public ArrayList<Player> getPlayers(){
 		return players;
 	}
