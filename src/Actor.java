@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.awt.Image;
 
-
 abstract class Actor {
 	
 	protected int x;
