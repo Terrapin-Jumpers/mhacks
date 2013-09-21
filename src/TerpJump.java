@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 public class TerpJump extends JFrame implements Runnable {
 	
 	World world;
-	static final int HEIGHT=Toolkit.getDefaultToolkit().getScreenSize().height; 
-	static final int WIDTH=Toolkit.getDefaultToolkit().getScreenSize().width;
+	static final int HEIGHT=Toolkit.getDefaultToolkit().getScreenSize().height/3; 
+	static final int WIDTH=Toolkit.getDefaultToolkit().getScreenSize().width/3;
 	static final int FPS = 60;
 	static final int REFRESH_RATE = 1000/FPS;
 	
@@ -29,7 +29,6 @@ public class TerpJump extends JFrame implements Runnable {
 	}
 
 	public void run() {
-		
 		while (true) {
 			world.update();
 			world.repaint();

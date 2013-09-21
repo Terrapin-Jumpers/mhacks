@@ -1,8 +1,10 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+
 import javax.swing.JPanel;
 
 public class World extends JPanel{
@@ -66,13 +68,16 @@ public class World extends JPanel{
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
         AffineTransform oldXform = g2.getTransform();
-        g2.scale(1f, .97f);
+        g2.scale(3f, 3f);
         
 		g.clearRect(0, 0, width, height);
 		for (Actor a : actors)
 			a.paint(g);
 		
 		g2.setTransform(oldXform);
+		
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 	}
 
 	public void addChild(Actor a) {
