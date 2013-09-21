@@ -31,8 +31,18 @@ abstract class Actor {
 			width = image.getWidth();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
+		}	
+	}
+	
+	 //Finds the area over which the actor will travel
+	public Rectangle getCollisionBox(){
+	    Rectangle rec = new Rectangle(((int) this.xSpeed+this.width), ((int) this.ySpeed+this.height));
+	    return rec;
+	}
+	
+	//Finds if current actor is within another actors field of motion
+	public boolean willCollideWith(Actor other){
+	    return (other.getCollisionBox().contains(this.getCollisionBox()));
 	}
 	
 	public void move() {
