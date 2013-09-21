@@ -1,10 +1,11 @@
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class World extends JPanel {
+public class World extends JPanel{
 	public static ArrayList<Actor> actors = new ArrayList<Actor>();
 	
 	static final int GRID_SIZE = 32;
@@ -14,6 +15,7 @@ public class World extends JPanel {
 	
 	private ArrayList <Player> players;
 	
+
 	
 	public World(int width, int height,int numPlayers) {
 		
@@ -22,7 +24,7 @@ public class World extends JPanel {
 		this.height = height;
 		
 		for(int i =1;i<=numPlayers;i++){
-			Player x =  new Player(100*i,height-100);
+			Player x =  new Player(100*i,height-100, i);
 			players.add(x);
 			this.addChild(x);
 		}

@@ -1,3 +1,5 @@
+import java.awt.event.KeyEvent;
+
 public class Player extends Actor {
 	
 	private final static int JUMP_SPEED = -10;
@@ -6,9 +8,9 @@ public class Player extends Actor {
 	static float gravity = 0.5f;
 	private int score = 0;
 		
-	public Player(int x, int y) {
+	public Player(int x, int y, int playerNumber) {
 		super(x, y);
-		initWithImage("Player.png");
+		initWithImage("Player_"+playerNumber+".png");
 	}
 
 	public void move() {
@@ -20,6 +22,7 @@ public class Player extends Actor {
 		super.move();
 	}
 
+	
 	void jump() {
 		
 		if(!airbourne){
