@@ -14,13 +14,13 @@ public class World extends JPanel{
 	private int width;
 	private int height;
 	
-	private ArrayList <Player> players;
-	
+	private ArrayList<Player> players;
 
-	
 	public World(int width, int height,int numPlayers) {
 		this.width = width;
 		this.height = height;
+		
+		players = new ArrayList<Player>(numPlayers);
 		
 		for(int i=1;i<=numPlayers;i++){
 			Player x =  new Player(100*(numPlayers-i),height-100, i);
