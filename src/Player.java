@@ -29,6 +29,6 @@ public class Player extends Actor {
 	}
 	
 	void die() {
-		score <= 0 ? alive = false : alive = true;
+		alive = false;
 	}
 }

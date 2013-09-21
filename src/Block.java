@@ -2,10 +2,8 @@
 	 
 	 protected static final int DAMAGE = 100;
 	 
-	 public Block(int x, int y,int xSpeed,int ySpeed) {
-		 
-		 super(x, y, DAMAGE,xSpeed,ySpeed);
-		 
+	 public Block(int x, int y) {
+		 super(x, y, DAMAGE);
 		 initWithImage("Block.png");
 	 }
 }
