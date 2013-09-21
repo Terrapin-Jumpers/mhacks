@@ -11,10 +11,9 @@ public class World extends JPanel{
 	
 	public static final int SPEED = 1;
 	static final int GRID_SIZE = 32;
-	
+
 	private int width;
-	private int height;
-	
+	private int height;	
 	private ArrayList<Player> players;
 
 	public World(int width, int height,int numPlayers) {
@@ -29,9 +28,9 @@ public class World extends JPanel{
 			this.addChild(x);
 			x.jump();
 		}
-		
-		Block block = new Block(200, height-100,1);
-		
+
+		Block block = new Block(500, height-100,1);
+
 		this.addChild(block);
 		
 		Block floor = new Block(0, height - GRID_SIZE, width/GRID_SIZE);
@@ -39,9 +38,8 @@ public class World extends JPanel{
 		
 		addChild(new Block(400, height - 50, 1));
 	}
-	
-	public void update() {
-		
+
+	public void update() {		
 		for (Actor a : actors) {
 			a.move();
 			//@todo need to fix this, can cause a delay in jumping
@@ -63,7 +61,7 @@ public class World extends JPanel{
 			actors.remove(a);
 		garbage.clear();
 	}
-	
+
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
         AffineTransform oldXform = g2.getTransform();
@@ -75,7 +73,7 @@ public class World extends JPanel{
 		
 		g2.setTransform(oldXform);
 	}
-	
+
 	public void addChild(Actor a) {
 		actors.add(a);
 	}
