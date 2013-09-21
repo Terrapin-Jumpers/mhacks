@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,13 @@ abstract class Actor {
 		}
 		
 	}
-	
+	public Rectangle getCollisionBox(){
+		Rectangle r = new Rectangle((int)this.xSpeed+this.width, (int) this.ySpeed+this.height);
+		return r;
+	}
+	public boolean willCollideWith(Actor other){
+		return (other.getCollisionBox().contains(this.getCollisionBox()));
+	}
 	public void move() {
 		//changes the x/y coordinate by how much the object is moving in either
 		//direction
@@ -68,4 +75,5 @@ abstract class Actor {
 	public int getHeight() {
 		return height;
 	}
+	
 }

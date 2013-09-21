@@ -1,6 +1,6 @@
 public class Player extends Actor {
-	private static int jumpSpeed = -10;
-	private int PLAYER_X, PLAYER_Y = 5;
+	
+	private final static int JUMP_SPEED = -10;
 	private boolean alive = true;
 	private boolean airbourne = false;
 	static float gravity = 0.5f;
@@ -14,7 +14,7 @@ public class Player extends Actor {
 	}
 
 	public void move() {
-		x ++;
+		
 		//Checks if in air, slows ySpeed
 		if(airbourne){
 			ySpeed+=gravity;
@@ -23,8 +23,9 @@ public class Player extends Actor {
 	}
 
 	void jump() {
+		
 		if(!airbourne){
-			ySpeed = jumpSpeed;
+			ySpeed = JUMP_SPEED;
 			airbourne =true;
 		}
 		

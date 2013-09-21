@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
 public class TerpJump extends JFrame implements Runnable {
+	
 	World world;
 	static final int HEIGHT=720; 
 	static final int WIDTH=960;
@@ -17,7 +18,7 @@ public class TerpJump extends JFrame implements Runnable {
 		this.setSize(WIDTH, HEIGHT);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		world = new World(WIDTH, HEIGHT);
+		world = new World(WIDTH, HEIGHT,4);
 		this.add(world);
 	}
 
@@ -26,6 +27,7 @@ public class TerpJump extends JFrame implements Runnable {
 	}
 
 	public void run() {
+		
 		while (true) {
 			world.update();
 			world.repaint();
