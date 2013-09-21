@@ -1,5 +1,4 @@
 public class Player extends Actor {
-	
 	private int PLAYER_X, PLAYER_Y = 5;
 	private boolean alive;
 	int score;
@@ -30,6 +29,6 @@ public class Player extends Actor {
 	}
 	
 	void die() {
-		alive = false;
+		score <= 0 ? alive = false : alive = true;
 	}
 }
