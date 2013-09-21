@@ -35,14 +35,19 @@ abstract class Actor {
 	}
 	
 	 //Finds the area over which the actor will travel
-	public Rectangle getCollisionBox(){
-	    Rectangle rec = new Rectangle(((int) this.xSpeed+this.width), ((int) this.ySpeed+this.height));
+	public Rectangle getCollisionBox() {
+	    Rectangle rec = new Rectangle(x, y, (int) xSpeed + width, (int) ySpeed + height);
 	    return rec;
 	}
 	
 	//Finds if current actor is within another actors field of motion
-	public boolean willCollideWith(Actor other){
-	    return (other.getCollisionBox().contains(this.getCollisionBox()));
+	public boolean willCollideWith(Actor other) {
+	    return (other.getCollisionBox().intersects(this.getCollisionBox()));
+	}
+	
+	public void moveToContact(Actor other) {
+		//if moving on top
+		y = other.getY() - height;
 	}
 	
 	public void move() {

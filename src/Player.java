@@ -21,6 +21,21 @@ public class Player extends Actor {
 		}
 		super.move();
 	}
+	
+	public void moveToContact(Actor other) {
+		//if moving on top
+		y = other.getY() - height;
+		airbourne = false;
+		ySpeed = 0;
+	}
+	
+	void fall() {
+		airbourne = true;
+	}
+	
+	boolean isAirbourne() {
+		return airbourne;
+	}
 
 	
 	void jump() {
