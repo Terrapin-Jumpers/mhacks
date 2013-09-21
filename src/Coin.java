@@ -12,6 +12,6 @@ public class Coin extends Actor {
 	}
 	
 	void collected(Player p) {
-		touched.add(p.playerNumber);
+		touched.add(p.getNumber());
 	}
 }

@@ -7,10 +7,12 @@ public class Player extends Actor {
 	private boolean airbourne = false;
 	static float gravity = 0.5f;
 	private int score = 0;
+	private int playerNumber;
 		
 	public Player(int x, int y, int playerNumber) {
 		super(x, y);
 		initWithImage("Player_"+playerNumber+".png");
+		this.playerNumber = playerNumber;
 	}
 
 	public void move() {
@@ -46,18 +48,14 @@ public class Player extends Actor {
 		}
 	}
 	
-	void collectCoin(Coin c) {
-		score += c.POINTS;
-		c.collected(this);
-	}
-	
 	void collide(Obstacle obs) {
 		score -= obs.damage;
 		x -= 5;
 	}
 
-	void getCoin() {
-		score += 10;
+	void getCoin(Coin c) {
+		score += c.POINTS;
+		c.collected(this);
 	}
 
 	void die() {
@@ -66,5 +64,9 @@ public class Player extends Actor {
 	
 	boolean isAlive() {
 		return (score <= 0) ? false : true;
+	}
+	
+	int getNumber() {
+		return playerNumber;
 	}
 }
