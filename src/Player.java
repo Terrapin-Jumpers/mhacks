@@ -4,7 +4,7 @@ public class Player extends Actor {
 	
 	public Player(int x, int y) {
 		super(x, y);
-		initWithImage("images/Player.png");
+		initWithImage("Player.png");
 		alive = true;
 		score = 0;
 	}
