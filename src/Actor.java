@@ -24,7 +24,9 @@ public class Actor {
 	public int getY(){
 		return y;
 	}
-	
+	public void move(){
+		
+	}
 	
 	
 }
