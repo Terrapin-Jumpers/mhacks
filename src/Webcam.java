@@ -1,6 +1,7 @@
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -15,9 +16,14 @@ import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
-public class Webcam {
-	
+public class Webcam {	
 	VideoCapture camera;
+	
+	final static int TIME_COUNT = 10;
+	int prevCount;
+	int time = TIME_COUNT;
+	
+	int cutoff = -1;
 	
 	public Webcam() {
 		System.out.println("Loading OpenCV...");
@@ -54,7 +60,7 @@ public class Webcam {
 	}
 	
 	public int getNumFaces(Mat frame) {
-		int faces = 0;
+		int count = 0;
 		
 		CascadeClassifier faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_frontalface.xml").getPath());
 	    MatOfRect faceDetections = new MatOfRect();
@@ -64,13 +70,23 @@ public class Webcam {
 	        Core.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
 	    }
 	    
-	    faces = faceDetections.toArray().length;
-	    
+	    count = faceDetections.toArray().length;
 	    /*faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_profileface.xml").getPath());
 	    faceDetections = new MatOfRect();
 	    faceDetector.detectMultiScale(frame, faceDetections);*/
 	    
-	    return faces;// + faceDetections.toArray().length;
+	    if (time > 0 && prevCount != count) {
+	    	prevCount = count;
+	    	time = TIME_COUNT;
+	    } else if (count > 0 && time > -1){
+	    	time --;
+	    }
+	    
+	    return count;// + faceDetections.toArray().length;
+	}
+	
+	public int getFinalFaces() {
+		return (time < 0) ? prevCount : -1;
 	}
 	
 	public BufferedImage matToBufferedImage(Mat mat) {
