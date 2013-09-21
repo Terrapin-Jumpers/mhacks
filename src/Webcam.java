@@ -1,5 +1,16 @@
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfRect;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
@@ -14,17 +25,15 @@ public class Webcam {
 		System.loadLibrary("opencv_java246"); // Load the native library.
 
 		camera = new VideoCapture(0);
-		
 		//wait for camera to startup
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 		}
 		
-		if(!camera.isOpened()){
+		if (!camera.isOpened()){
 			System.out.println("Camera Error!");
-		}
-		else{
+		} else{
 			System.out.println("Camera seems OK.");
 		}
 	}
@@ -45,60 +54,46 @@ public class Webcam {
 	}
 	
 	public int getNumFaces(Mat frame) {
+		int faces = 0;
+		
 		CascadeClassifier faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_frontalface.xml").getPath());
-
 	    MatOfRect faceDetections = new MatOfRect();
 	    faceDetector.detectMultiScale(frame, faceDetections);
 	    
-	    return faceDetections.toArray().length;
+	    for (Rect rect : faceDetections.toArray()) {
+	        Core.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
+	    }
+	    
+	    faces = faceDetections.toArray().length;
+	    
+	    /*faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_profileface.xml").getPath());
+	    faceDetections = new MatOfRect();
+	    faceDetector.detectMultiScale(frame, faceDetections);*/
+	    
+	    return faces;// + faceDetections.toArray().length;
 	}
 	
-	public static void main (String args[]){
+	public BufferedImage matToBufferedImage(Mat mat) {
+		MatOfByte matOfByte = new MatOfByte();
+		
+		Highgui.imencode(".jpg", mat, matOfByte); 
+
+	    byte[] byteArray = matOfByte.toArray();
+	    BufferedImage bufImage = null;
+
+	    try {
+	        InputStream in = new ByteArrayInputStream(byteArray);
+	        bufImage = ImageIO.read(in);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return bufImage;
+	}
+	
+	/*public static void main (String args[]){
 		Webcam webcam = new Webcam();
 		Mat frame = webcam.getFrame();
 		System.out.println("NUMBER OF FACES DETECTED: " + webcam.getNumFaces(frame));
-	}
-	
-	/*public Webcam() {
-		System.out.println("Hello, OpenCV");
-		// Load the native library.
-		System.loadLibrary("opencv_java246");
-
-		VideoCapture camera = new VideoCapture(0);
-		
-		//let camera startup
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-		}
-		
-		//camera.open(0); //Useless - also crashes the thing
-		if(!camera.isOpened()){
-			System.out.println("Camera Error");
-		}
-		else{
-			System.out.println("Camera OK?");
-		}
-
-		Mat frame = new Mat();
-
-		//camera.grab();
-		//System.out.println("Frame Grabbed");
-		//camera.retrieve(frame);
-		//System.out.println("Frame Decoded");
-
-		camera.read(frame);
-		System.out.println("Frame Obtained");
-
-		// No difference
-	    //camera.release();
-
-		System.out.println("Captured Frame Width " + frame.width());
-		
-		//CascadeClassifier faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_frontalface.xml").getPath());
-	    //Mat image = Highgui.imdecode(frame, 0);
-		
-		Highgui.imwrite("camera.jpg", frame);
-		System.out.println("OK");
 	}*/
 }
