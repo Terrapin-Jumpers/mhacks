@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
@@ -6,19 +7,20 @@ import javax.swing.JFrame;
 public class TerpJump extends JFrame implements Runnable {
 	
 	World world;
-	static final int HEIGHT=720; 
-	static final int WIDTH=960;
+	static final int HEIGHT=480; 
+	static final int WIDTH=640;
 	static final int FPS = 60;
 	static final int REFRESH_RATE = 1000/FPS;
 	
 	public TerpJump() {
 		super("TerpJump");
-		
-		world = new World(WIDTH, HEIGHT, 4);
+		world = new World(WIDTH, HEIGHT, 3);
 		this.add(world);
-		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(screenSize);
+		setResizable(false);
 		setVisible(true);
-		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(null);
 	}
 
