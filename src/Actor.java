@@ -36,7 +36,7 @@ abstract class Actor {
 	
 	 //Finds the area over which the actor will travel
 	public Rectangle getCollisionBox() {
-	    Rectangle rec = new Rectangle(x, y, (int) xSpeed + width, (int) ySpeed + height);
+	    Rectangle rec = new Rectangle(x, y, (int) xSpeed + width, (int) ySpeed + height + 1);
 	    return rec;
 	}
 	
