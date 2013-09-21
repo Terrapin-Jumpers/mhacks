@@ -1,4 +1,3 @@
-
 public class Actor {
 	
 	protected int x;
@@ -8,8 +7,7 @@ public class Actor {
 	public Actor(int x, int y, String imagePath ){
 		this.x = x;
 		this.y =y; 
-		
-		//add imagePath
+		this.imagePath = imagePath;
 	}
 	
 	//gets x-coordinate 
@@ -27,6 +25,4 @@ public class Actor {
 	public void move(){
 		
 	}
-	
-	
 }

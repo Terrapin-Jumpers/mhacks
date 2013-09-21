@@ -1,9 +1,10 @@
 public class Player extends Actor {
+	private int PLAYER_X, PLAYER_Y = 5;
 	private boolean alive;
 	int score;
 	
-	public Player(String img) {
-		super(5,5,img);
+	public Player() {
+		super(PLAYER_X,PLAYER_Y,"images/Player.png");
 		alive = true;
 		score = 0;
 	}
