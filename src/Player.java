@@ -27,8 +27,13 @@ public class Player extends Actor {
 			airbourne =true;
 		}
 	}
-
-	void hitObstacle(Obstacle obs) {
+	
+	void collectCoin(Coin c) {
+		score += c.POINTS;
+		c.collected(this);
+	}
+	
+	void collide(Obstacle obs) {
 		score -= obs.damage;
 		x -= 5;
 	}
@@ -39,5 +44,9 @@ public class Player extends Actor {
 
 	void die() {
 		alive = false;
+	}
+	
+	boolean isAlive() {
+		return (score <= 0) ? false : true;
 	}
 }
