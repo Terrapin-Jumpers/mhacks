@@ -1,33 +1,44 @@
 public class Player extends Actor {
+	private static int jumpSpeed = -10;
 	private int PLAYER_X, PLAYER_Y = 5;
-	private boolean alive;
-	int score;
+	private boolean alive = true;
+	private boolean airbourne = false;
+	static float gravity = 0.5f;
+	private int score = 0;
+	
 	
 	public Player(int x, int y) {
+
 		super(x, y);
 		initWithImage("Player.png");
-		alive = true;
-		score = 0;
 	}
-	
-	void move(int m) {
-		x += m;
+
+	public void move() {
+		x ++;
+		//Checks if in air, slows ySpeed
+		if(airbourne){
+			ySpeed+=gravity;
+		}
+		super.move();
 	}
-	
+
 	void jump() {
-		int vSpeed = 10;
-		y += 5;
+		if(!airbourne){
+			ySpeed = jumpSpeed;
+			airbourne =true;
+		}
+		
 	}
-	
+
 	void hitObstacle(Obstacle obs) {
 		score -= obs.damage;
 		x -= 5;
 	}
-	
+
 	void getCoin() {
 		score += 10;
 	}
-	
+
 	void die() {
 		alive = false;
 	}

@@ -6,4 +6,7 @@ public class Obstacle extends Actor {
 		super(x, y);
 		this.damage = damage;
 	}
+	public int getDamage(){
+		return damage;
+	}
 }
