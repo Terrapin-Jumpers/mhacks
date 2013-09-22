@@ -24,6 +24,8 @@ public class WebcamView extends JFrame implements Runnable {
 	static final int GAME_WIDTH = (int)(FULL_WIDTH/World.SCALE);
 	static final int GAME_HEIGHT = (int)(FULL_HEIGHT/World.SCALE);
 	
+	static final int MAX_PLAYERS = 4;
+	
 	private static final int FPS = 30;
 	private static final int REFRESH_RATE = 1000/FPS; // time in MS
 	
@@ -77,7 +79,7 @@ public class WebcamView extends JFrame implements Runnable {
 	
 	public void play() {
 		if (!playing) {
-			world = new World(GAME_WIDTH, GAME_HEIGHT, webcam.getFinalFaces());
+			world = new World(GAME_WIDTH, GAME_HEIGHT, Math.min(webcam.getFinalFaces(), MAX_PLAYERS));
 			//this.add(world);
 			panel.setWorld(world);
 			playing = true;

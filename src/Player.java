@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 
 public class Player extends Actor {
 	
-	public static final Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
-	public static final String[] names = {"RED", "BLUE", "GREEN"};
+	public static final Color[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.WHITE};
+	public static final String[] names = {"RED", "BLUE", "GREEN", "WHITE"};
 	
 	public final static int JUMP_SPEED = -9;
 	private boolean alive = true;

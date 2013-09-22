@@ -177,9 +177,9 @@ public class Webcam {
         return dimg;
     }
 	
-	/*public static void main (String args[]){
+	public static void main (String args[]){
 		Webcam webcam = new Webcam();
 		Mat frame = webcam.getFrame();
-		System.out.println("NUMBER OF FACES DETECTED: " + webcam.getNumFaces(frame));
-	}*/
+		//System.out.println("NUMBER OF FACES DETECTED: " + webcam.getNumFaces(frame));
+	}
 }
