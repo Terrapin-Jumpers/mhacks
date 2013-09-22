@@ -40,7 +40,7 @@ public class World extends JPanel{
 		players = new ArrayList<Player>(numPlayers);
 
 		for(int i=1;i<=numPlayers;i++){
-			Player x =  new Player(100*numPlayers - 100*(numPlayers-i),height-100, i);
+			Player x =  new Player(32 + 64*(numPlayers-i),height-100, i);
 			players.add(x);
 			this.addChild(x);
 		}
@@ -76,13 +76,13 @@ public class World extends JPanel{
 			
 			//check for movement
 			double m = p.getYMotion();
-			if (m < -3f) {
+			if (m < -4f) {
 				p.jump();
-			} else if (m > 3f) {
+			} else if (m > 4f) {
 				System.out.println("Player " + p.getNumber() + " ducked!");
 			}
 			
-			if (score % 20 == 0)
+			if (score % 20 == 0 && p.isAlive())
 				p.addScore(10);
 		}
 		

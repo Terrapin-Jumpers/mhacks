@@ -80,7 +80,7 @@ public class Player extends Actor {
 	}
 	
 	boolean isAlive() {
-		return (score <= 0) ? false : true;
+		return (score > 0 && x + width > 0);
 	}
 	
 	int getNumber() {

@@ -26,14 +26,18 @@ public class Webcam {
 	Rectangle[] faces = null;
 	
 	final static float TIME_SECONDS = 2f;
-	final static float TIMEOUT = 5f;
 	long initTime = -1;
 	int prevCount;
 	long time = -1;
 	boolean didFinishTime = false;
-	boolean countWentAboveOne = false;
 	
 	private int width, height;
+	
+	private static final int MAX_HISTORY = 30;
+	private int[] history = new int[MAX_HISTORY];
+	private int historyIndex = 0;
+	
+	private static final float EPSILON = 0.05f; 
 	
 	public Webcam() {
 		System.out.println("Loading OpenCV...");
@@ -85,34 +89,42 @@ public class Webcam {
 	    
 	    int i = 0;
 	    for (Rect rect : faceDetections.toArray()) {
-	        Core.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
-	        faces[i++] = new Rectangle(WebcamView.FULL_WIDTH - (rect.x + rect.width), rect.y, rect.width, rect.height);
+	    	if ((double)(rect.width * rect.height)/(WebcamView.FULL_WIDTH * WebcamView.FULL_HEIGHT) > EPSILON) {
+	    		Core.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
+	    		faces[i++] = new Rectangle(WebcamView.FULL_WIDTH - (rect.x + rect.width), rect.y, rect.width, rect.height);
+	    	} else System.out.println((double)(rect.width * rect.height)/(WebcamView.FULL_WIDTH * WebcamView.FULL_HEIGHT) + " is negligible");
 	    }
 	    
-	    /*faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_profileface.xml").getPath());
-	    faceDetections = new MatOfRect();
-	    faceDetector.detectMultiScale(frame, faceDetections);*/
-	    
-	    if (prevCount != count || time < 0) {
-	    	prevCount = count;
-	    	time = System.nanoTime();
-	    } else if (!didFinishTime && count > 0 && ((double)System.nanoTime() - (double)time)/1000000000.0 > TIME_SECONDS){
-	    	didFinishTime = true;
+	    if (historyIndex < MAX_HISTORY) {
+	    	history[historyIndex] = i;
+	    	historyIndex ++;
+	    	
+	    	return -1;
+	    } else {
+	    	int total = 0;
+	    	for (int j = MAX_HISTORY - 2; j >= 0; j--) {
+	    		total += history[j];
+	    		history[j + 1] = history[j];
+	    	}
+	    	
+	    	history[0] = i;
+	    	total += i;
+	    	
+	    	total = total / MAX_HISTORY;
+	    	
+	    	if (total != prevCount) {
+	    		prevCount = total;
+	    	} else {
+	    		didFinishTime = true;
+	    		prevCount = total;
+	    	}
+	    	
+	    	return total;
 	    }
 	    
-	    if (count > 1) {
-	    	countWentAboveOne = true;
-	    }
 	    
-	    if (initTime < 0)
-	    	initTime = System.nanoTime();
 	    
-	    if (countWentAboveOne && (System.nanoTime() - initTime)/1000000000.0 > TIMEOUT) {
-	    	didFinishTime = true;
-	    	count = prevCount = 2;
-	    }
-	    
-	    return count; // + faceDetections.toArray().length;
+	    //return count; // + faceDetections.toArray().length;
 	}
 	
 	public int getFinalFaces() {
