@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class Obstacle extends Actor {
 	
 	protected int damage;

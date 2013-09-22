@@ -2,7 +2,7 @@ import java.awt.Graphics;
 
  public class Block extends Obstacle {
 	 
-	 protected static final int DAMAGE = 100;
+	 protected static final int DAMAGE = 20;
 	 
 	 private int times;
 	 private int initialWidth;

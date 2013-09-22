@@ -1,12 +1,8 @@
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -37,7 +33,7 @@ public class Webcam {
 	private int[] history = new int[MAX_HISTORY];
 	private int historyIndex = 0;
 	
-	private static final float EPSILON = 0.05f; 
+	private static final float EPSILON = 0.005f; 
 	
 	public Webcam() {
 		System.out.println("Loading OpenCV...");
@@ -92,39 +88,49 @@ public class Webcam {
 	    	if ((double)(rect.width * rect.height)/(WebcamView.FULL_WIDTH * WebcamView.FULL_HEIGHT) > EPSILON) {
 	    		Core.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
 	    		faces[i++] = new Rectangle(WebcamView.FULL_WIDTH - (rect.x + rect.width), rect.y, rect.width, rect.height);
-	    	} else System.out.println((double)(rect.width * rect.height)/(WebcamView.FULL_WIDTH * WebcamView.FULL_HEIGHT) + " is negligible");
+	    	}
 	    }
 	    
-	    if (historyIndex < MAX_HISTORY) {
-	    	history[historyIndex] = i;
-	    	historyIndex ++;
-	    	
-	    	return -1;
-	    } else {
-	    	int total = 0;
-	    	for (int j = MAX_HISTORY - 2; j >= 0; j--) {
-	    		total += history[j];
-	    		history[j + 1] = history[j];
-	    	}
-	    	
-	    	history[0] = i;
-	    	total += i;
-	    	
-	    	total = total / MAX_HISTORY;
-	    	
-	    	if (total != prevCount) {
-	    		prevCount = total;
-	    	} else {
-	    		didFinishTime = true;
-	    		prevCount = total;
-	    	}
-	    	
-	    	return total;
+	    if (!didFinishTime && i != 0) {
+		    if (historyIndex < MAX_HISTORY) {
+		    	history[historyIndex] = i;
+		    	historyIndex ++;
+		    	
+		    	return -1;
+		    } else {
+		    	int total = 0;
+		    	for (int j = MAX_HISTORY - 2; j >= 0; j--) {
+		    		total += history[j];
+		    		history[j + 1] = history[j];
+		    	}
+		    	
+		    	history[0] = i;
+		    	total += i;
+		    	
+		    	total = (int) Math.round((double)total / MAX_HISTORY);
+		    	
+		    	if (total != prevCount) {
+		    		prevCount = total;
+		    		initTime = System.nanoTime();
+		    	} else if ((System.nanoTime() - initTime)/1000000.0 > TIME_SECONDS){
+		    		didFinishTime = true;
+		    		prevCount = total;
+		    	}
+		    	
+		    	return total;
+		    }
 	    }
 	    
-	    
+	    return getFinalFaces();
 	    
 	    //return count; // + faceDetections.toArray().length;
+	}
+	
+	public void reset() {
+		didFinishTime = false;
+		prevCount = 0;
+		history = new int[MAX_HISTORY];
+		historyIndex = 0;
 	}
 	
 	public int getFinalFaces() {

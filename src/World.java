@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
@@ -32,6 +31,14 @@ public class World extends JPanel{
 	Font font = new Font("Sans-Serif", Font.BOLD, 18);
 	Block floor;
 	private int score = 0;
+	
+	private ArrayList<Paralax> paralax = new ArrayList<Paralax>();
+	
+	private LevelGenerator generator;
+	
+	private Color transGray = new Color(0, 0, 0, 100);
+	
+	private boolean over;
 
 	public World(int width, int height,int numPlayers) {
 		this.width = width;
@@ -40,19 +47,23 @@ public class World extends JPanel{
 		players = new ArrayList<Player>(numPlayers);
 
 		for(int i=1;i<=numPlayers;i++){
-			Player x =  new Player(32 + 64*(numPlayers-i),height-100, i);
+			Player x =  new Player(32+ 64*(i),height-100, i);
 			players.add(x);
 			this.addChild(x);
 		}
 
-		Block block = new Block(500, height-100, 1);
-
-		this.addChild(block);
+		/*Block block = new Block(500, height-100, 1);
+		this.addChild(block);*/
 
 		floor = new Block(0, height - GRID_SIZE, (width/GRID_SIZE)*2);
 		addChild(floor);
 
-		addChild(new Block(400, height - 50, 1));
+		//addChild(new Block(400, height - 50, 1));
+		
+		paralax.add(new Paralax(height - GRID_SIZE*4 + 8, 20, "pink_city2.png"));
+		paralax.add(new Paralax(height - GRID_SIZE*4, 5, "pink_city1.png"));
+		
+		generator = new LevelGenerator(this);
 	}
 
 	public void update() {
@@ -61,14 +72,21 @@ public class World extends JPanel{
 			floor.setX(0);
 		}
 		
+		boolean alive = false;
 		for (Player p : players) {
 			boolean grounded = false;
 			for (Actor a : actors) if (a instanceof Obstacle) {
-				if (p.willCollideWith(a) && p.isAbove(a)) {
-					grounded = true;
-					p.moveToContact(a);
-				} else if (p.willCollideWith(a)) {
-					p.collideRight((Obstacle) a);
+				if (p.willCollideWith(a)) {
+					if (p.isAbove(a)) {
+						grounded = true;
+						p.moveToContact(a);
+					} else if (a.isAbove(p)) {
+						grounded = false;
+						p.collideTop((Obstacle) a);
+						break;
+					} else {
+						p.collideRight((Obstacle) a);
+					}
 				}
 			}
 			if (!grounded)
@@ -78,12 +96,19 @@ public class World extends JPanel{
 			double m = p.getYMotion();
 			if (m < -4f) {
 				p.jump();
-			} else if (m > 4f) {
-				System.out.println("Player " + p.getNumber() + " ducked!");
+			} else if (m > 3f) {
+				p.duck();
 			}
 			
 			if (score % 20 == 0 && p.isAlive())
 				p.addScore(10);
+			
+			if (p.isAlive())
+				alive = true;
+		}
+		
+		if (!alive) {
+			over = true;
 		}
 		
 		//update instances
@@ -98,7 +123,13 @@ public class World extends JPanel{
 			actors.remove(a);
 		garbage.clear();
 		
+		//paralax
+		for (Paralax p : paralax)
+			p.move();
+		
 		score ++;
+		
+		generator.generate();
 		/*if (SPEED < 5)
 			SPEED += 0.01;
 		else SPEED = 5;*/
@@ -112,21 +143,31 @@ public class World extends JPanel{
         g2.setBackground(Color.DARK_GRAY);
 		g.clearRect(0, 0, width, height);
 		
+		for (Paralax p : paralax)
+			p.paint(g);
+		
 		for (Actor a : actors)
 			a.paint(g);
 		
-		g2.setColor(Color.red);
 		g2.setFont(font);
 		int i = 0;
 		for (Player p : getPlayers()) {
+			g2.setColor(Player.colors[p.getNumber() - 1]);
 			Rectangle r = p.getRect();
 			if (r != null)
 				g2.drawRect((int)(r.x/SCALE), (int)(r.y/SCALE), (int)(r.width/SCALE), (int)(r.height/SCALE));
 			int x = width / getPlayers().size();
-			g2.drawString(p.getScore() + "", x*i++, 18);
+			g2.drawString(p.getScore() + "", x*i, 18);
 			//g2.drawString(p.getYMotion() + "", x*i++, 18);
+			
+			if (!p.isAlive()) {
+				g2.setColor(transGray);
+				g2.fillRect(x*i, 0, x*(i+1), WebcamView.GAME_HEIGHT);
+			}
+			
+			i ++;
 		}
-		
+
 		g2.setTransform(oldXform);
 	}
 
@@ -140,5 +181,19 @@ public class World extends JPanel{
 
 	public ArrayList<Player> getPlayers(){
 		return players;
+	}
+	
+	public Player getWinner() {
+		Player win = null;
+		for (Player p : players) {
+			if (win == null || p.getScore() > win.getScore())
+				win = p;
+		}
+		
+		return win;
+	}
+	
+	public boolean isGameOver() {
+		return over;
 	}
 }

@@ -1,9 +1,13 @@
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 
 public class Player extends Actor {
 	
-	private final static int JUMP_SPEED = -10;
+	public static final Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
+	public static final String[] names = {"RED", "BLUE", "GREEN"};
+	
+	public final static int JUMP_SPEED = -9;
 	private boolean alive = true;
 	private boolean airbourne = false;
 	static float gravity = 0.5f;
@@ -17,11 +21,22 @@ public class Player extends Actor {
 	private int rectTimer = 0;
 	
 	private static final double MOTION_NORM = 20f;
-	private static final double MOTION_CAP = 12f;
-		
+	private static final double MOTION_CAP = 16f;
+	
+	private boolean ducking = false;
+	private int duckTimer = 0;
+	private final static int DUCK_TIME = 30;
+	
+	private boolean boost = false;
+	private int boostTimer = 0;
+	private final static int BOOST_TIME = 6;
+	
+	private int defaultHeight;
+	
 	public Player(int x, int y, int playerNumber) {
 		super(x, y);
 		initWithImage("Player_"+playerNumber+".png");
+		defaultHeight = height;
 		this.playerNumber = playerNumber;
 	}
 
@@ -30,6 +45,19 @@ public class Player extends Actor {
 			rectTimer --;
 		} else {
 			clearRect();
+		}
+		
+		if (ducking) {
+			if (duckTimer > 0) duckTimer --;
+			else {
+				ducking = false;
+				height = defaultHeight;
+				y -= defaultHeight / 2 + 1;
+			}
+		}
+		if (boost) {
+			if (boostTimer > 0) {boostTimer --; ySpeed = JUMP_SPEED;}
+			else { boost = false; }
 		}
 		//Checks if in air, slows ySpeed
 		if(airbourne){
@@ -55,10 +83,30 @@ public class Player extends Actor {
 
 	
 	void jump() {
-		if(!airbourne){
+		if (!airbourne){
+			if (ducking && !boost) {
+				boost = true;
+				boostTimer = BOOST_TIME;
+				ducking = false;
+				height = defaultHeight;
+				y -= defaultHeight / 2;
+			}
 			ySpeed = JUMP_SPEED;
 			airbourne = true;
 			beenHit = false;
+		}
+	}
+	
+	void setOnGround() {
+		airbourne = false;
+	}
+	
+	void duck() {
+		if (!ducking && !airbourne) {
+			ducking = true;
+			duckTimer = DUCK_TIME;
+			height = defaultHeight / 2;
+			y += defaultHeight / 2 - 1;
 		}
 	}
 	
@@ -68,6 +116,15 @@ public class Player extends Actor {
 			score -= obs.damage;
 		}
 		x = obs.x - this.width;
+	}
+	
+	void collideTop(Obstacle obs) {
+		y = obs.getY() + obs.getHeight() + 2;
+		ySpeed = 0;
+	}
+	
+	public void paint(Graphics g) {
+		g.drawImage(image, x, y, width, height, null);
 	}
 
 	/*void getCoin(Coin c) {
@@ -80,7 +137,7 @@ public class Player extends Actor {
 	}
 	
 	boolean isAlive() {
-		return (score > 0 && x + width > 0);
+		return (score >= 0 && x + width >= 0);
 	}
 	
 	int getNumber() {
@@ -120,5 +177,9 @@ public class Player extends Actor {
 			}
 		}
 		return m;
+	}
+	
+	public String getName() {
+		return names[getNumber() - 1];
 	}
 }

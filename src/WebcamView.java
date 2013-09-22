@@ -1,10 +1,10 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -38,6 +38,8 @@ public class WebcamView extends JFrame implements Runnable {
 	
 	World world;
 	Mat frame = null;
+	
+	private int overTime = 0;
 	
 	public WebcamView() {
 		super("Webcam");
@@ -106,7 +108,7 @@ public class WebcamView extends JFrame implements Runnable {
 				boolean ok = true;
 				for (Rectangle rect : webcam.getFaces()) {
 					for (Rectangle boundary : boundaries) {
-						if (rect.intersects(boundary)) {
+						if (rect != null && boundary != null && rect.intersects(boundary)) {
 							ok = false;
 							break;
 						}
@@ -127,6 +129,20 @@ public class WebcamView extends JFrame implements Runnable {
 						i ++;
 					}
 				}
+				if (world.isGameOver()) {
+					state = WIN_STATE;
+				}
+				break;
+			case WIN_STATE:
+				if (overTime ++ > 120) {
+					world = null;
+					state = INIT_STATE;
+					webcam.reset();
+					playing = false;
+					overTime = 0;
+					frame = null;
+					panel.reset();
+				}
 				break;
 			}
 			
@@ -141,7 +157,6 @@ public class WebcamView extends JFrame implements Runnable {
 			try {
 				Thread.sleep(REFRESH_RATE);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -180,23 +195,45 @@ class WebcamPanel extends JPanel {
 		this.world = world;
 	}
 	
+	public void reset() {
+		world = null;
+		numFaces = -1;
+	}
+	
 	public void paint(Graphics g) {
 		
 		Graphics2D g2 = (Graphics2D) g;
 		//AffineTransform oldXform = g2.getTransform();
         //g2.scale(1f, 1f);
-        
+		g2.setColor(Color.red);
+		g2.setFont(font);
+		
 		if (this.world != null) {
-			world.update();
-			world.paint(g);
+			if (!world.isGameOver()) {
+				world.update();
+				world.paint(g);
+			} else {
+				ArrayList<Player> players;
+				players = world.getPlayers();
+				FontMetrics fm = getFontMetrics( getFont() );
+				String str;
+				if (players.size() == 1) {
+					str = "Game Over: " + players.get(0).getScore();
+				} else {
+					Player winner = world.getWinner();
+					g2.setColor(Player.colors[winner.getNumber() - 1]);
+					str = winner.getName() + " Player Wins!";
+				}
+				int ww = fm.stringWidth(str);
+				g2.drawString(str, (WebcamView.GAME_WIDTH - ww)/2, 160);
+			}
 		} else {
 			g.drawImage(frame, 0, 0, null);
 		}
-		g2.setColor(Color.red);
-		g2.setFont(font);
+		
 		if (numFaces <= 0)
 			g2.drawString(still, 40, 120);
-		else {
+		else if (world != null && !world.isGameOver()) {
 			g2.setColor(Color.green);
 			//g2.drawString("OK! " + numFaces + " Players!", 40, 120);
 			
