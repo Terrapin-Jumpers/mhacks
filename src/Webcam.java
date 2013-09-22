@@ -1,3 +1,8 @@
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -18,12 +23,14 @@ import org.opencv.objdetect.CascadeClassifier;
 
 public class Webcam {	
 	VideoCapture camera;
+	Rectangle[] faces = null;
 	
-	final static int TIME_COUNT = 10;
+	final static float TIME_SECONDS = 2f;
 	int prevCount;
-	int time = TIME_COUNT;
+	long time = -1;
+	boolean didFinishTime = false;
 	
-	int cutoff = -1;
+	private int width, height;
 	
 	public Webcam() {
 		System.out.println("Loading OpenCV...");
@@ -33,7 +40,7 @@ public class Webcam {
 		camera = new VideoCapture(0);
 		//wait for camera to startup
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 		}
 		
@@ -56,6 +63,10 @@ public class Webcam {
 		camera.grab();
 		//System.out.println("Frame Grabbed. Captured Frame Width " + frame.width());
 		camera.retrieve(frame);
+		if (width == 0) {
+			width = frame.width();
+			height = frame.height();
+		}
 		return frame;
 	}
 	
@@ -66,27 +77,35 @@ public class Webcam {
 	    MatOfRect faceDetections = new MatOfRect();
 	    faceDetector.detectMultiScale(frame, faceDetections);
 	    
+	    count = faceDetections.toArray().length;
+	    faces = new Rectangle[count];
+	    
+	    int i = 0;
 	    for (Rect rect : faceDetections.toArray()) {
 	        Core.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
+	        faces[i++] = new Rectangle(WebcamView.FULL_WIDTH - (rect.x + rect.width), rect.y, rect.width, rect.height);
 	    }
 	    
-	    count = faceDetections.toArray().length;
 	    /*faceDetector = new CascadeClassifier(getClass().getResource("/lbpcascade_profileface.xml").getPath());
 	    faceDetections = new MatOfRect();
 	    faceDetector.detectMultiScale(frame, faceDetections);*/
 	    
-	    if (time > 0 && prevCount != count) {
+	    if (prevCount != count || time < 0) {
 	    	prevCount = count;
-	    	time = TIME_COUNT;
-	    } else if (count > 0 && time > -1){
-	    	time --;
+	    	time = System.nanoTime();
+	    } else if (!didFinishTime && count > 0 && ((double)System.nanoTime() - (double)time)/1000000000.0 > TIME_SECONDS){
+	    	didFinishTime = true;
 	    }
 	    
-	    return count;// + faceDetections.toArray().length;
+	    return count; // + faceDetections.toArray().length;
 	}
 	
 	public int getFinalFaces() {
-		return (time < 0) ? prevCount : -1;
+		return (didFinishTime) ? prevCount : -1;
+	}
+	
+	public Rectangle[] getFaces() {
+		return faces;
 	}
 	
 	public BufferedImage matToBufferedImage(Mat mat) {
@@ -99,13 +118,31 @@ public class Webcam {
 
 	    try {
 	        InputStream in = new ByteArrayInputStream(byteArray);
-	        bufImage = ImageIO.read(in);
+	        bufImage = horizontalflip(ImageIO.read(in));
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 	    
 	    return bufImage;
 	}
+	
+	public int getFrameWidth() {
+		return width;
+	}
+	
+	public int getFrameHeight() {
+		return height;
+	}
+	
+	public BufferedImage horizontalflip(BufferedImage img) {
+        int w = img.getWidth();
+        int h = img.getHeight();
+        BufferedImage dimg = new BufferedImage(w, h, img.getType());
+        Graphics2D g = dimg.createGraphics();
+        g.drawImage(img, 0, 0, w, h, w, 0, 0, h, null);
+        g.dispose();
+        return dimg;
+    }
 	
 	/*public static void main (String args[]){
 		Webcam webcam = new Webcam();

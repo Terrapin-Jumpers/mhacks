@@ -1,3 +1,4 @@
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 public class Player extends Actor {
@@ -8,6 +9,11 @@ public class Player extends Actor {
 	static float gravity = 0.5f;
 	private int score = 0;
 	private int playerNumber;
+	
+	private Rectangle prevRect, rect;
+	
+	private static int RECT_TIME = 5;
+	private int rectTimer = 0;
 		
 	public Player(int x, int y, int playerNumber) {
 		super(x, y);
@@ -16,7 +22,11 @@ public class Player extends Actor {
 	}
 
 	public void move() {
-		
+		if (rectTimer > 0) {
+			rectTimer --;
+		} else {
+			clearRect();
+		}
 		//Checks if in air, slows ySpeed
 		if(airbourne){
 			ySpeed+=gravity;
@@ -53,10 +63,10 @@ public class Player extends Actor {
 		x -= 5;
 	}
 
-	void getCoin(Coin c) {
+	/*void getCoin(Coin c) {
 		score += c.POINTS;
 		c.collected(this);
-	}
+	}*/
 
 	void die() {
 		alive = false;
@@ -68,5 +78,36 @@ public class Player extends Actor {
 	
 	int getNumber() {
 		return playerNumber;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	/*public Rectangle getPrevRect() {
+		return prevRect;
+	}
+	
+	public void setPrevRect(Rectangle rect) {
+		prevRect = rect;
+	}*/
+	
+	public void clearRect() {
+		prevRect = null;
+		rect = null;
+	}
+	
+	public Rectangle getRect() {
+		return rect;
+	}
+	
+	public void setRect(Rectangle rect) {
+		rectTimer = RECT_TIME;
+		prevRect = this.rect;
+		this.rect = rect;
+	}
+	
+	public float getYMotion() {
+		return 0.0f;
 	}
 }

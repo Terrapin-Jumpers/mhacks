@@ -2,8 +2,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,41 +15,129 @@ import org.opencv.core.Mat;
 
 
 public class WebcamView extends JFrame implements Runnable {
+	private static final long serialVersionUID = 1L;
 	private Webcam webcam;
 	private WebcamPanel panel;
 	
-	private static int WIDTH = 1280;
-	private static int HEIGHT = 800;
+	static final int FULL_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
+	static final int FULL_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
+	static final int GAME_WIDTH = (int)(FULL_WIDTH/World.SCALE);
+	static final int GAME_HEIGHT = (int)(FULL_HEIGHT/World.SCALE);
 	
-	private static final int FPS = 15;
+	private static final int FPS = 30;
 	private static final int REFRESH_RATE = 1000/FPS; // time in MS
+	
+	boolean capture = true;
+	boolean playing = false;
+	
+	private final static int INIT_STATE = 0, READY_STATE = 1, GAME_STATE = 2, WIN_STATE = 3;
+	private int state = 0;
+	
+	private Rectangle[] boundaries;
+	private Rectangle[] sections;
+	
+	World world;
+	Mat frame = null;
 	
 	public WebcamView() {
 		super("Webcam");
 		
 		webcam = new Webcam();
 		
-		panel = new WebcamPanel(WIDTH, HEIGHT);
+		panel = new WebcamPanel(FULL_WIDTH, FULL_HEIGHT);
 		this.add(panel);
 		
-		setVisible(true);
-		setSize(WIDTH, HEIGHT);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(FULL_WIDTH, FULL_HEIGHT);
+		setResizable(false);
 		setLocationRelativeTo(null);
+		setVisible(true);
+		
+		new Thread(new Runnable() {
+            public void run() {
+            	while (true) {
+            		synchronized (this) {
+	   				 frame = webcam.getFrame();
+	   				 webcam.getNumFaces(frame);
+            		}
+	   				 try {
+	   					 Thread.sleep(REFRESH_RATE);
+	   				 } catch (InterruptedException e) {
+	   				 }
+            	}
+	        };
+	    }).start();
 	}
 	
 	public static void main(String[] args) {
 		new WebcamView().run();
 	}
+	
+	public void play() {
+		if (!playing) {
+			world = new World(GAME_WIDTH, GAME_HEIGHT, webcam.getFinalFaces());
+			//this.add(world);
+			panel.setWorld(world);
+			playing = true;
+			state = GAME_STATE;
+		}
+	}
 
 	@Override
 	public void run() {
 		while (true) {
-			Mat frame = webcam.getFrame();
-			webcam.getNumFaces(frame);
-			panel.setFaces(webcam.getFinalFaces());
-			BufferedImage image = webcam.matToBufferedImage(frame);
-			panel.setFrame(image);
+			
+			switch (state) {
+			case INIT_STATE:
+				int faces = webcam.getFinalFaces();
+				if (faces > 0) {
+					panel.setFaces(faces);
+					state = READY_STATE;
+					boundaries = new Rectangle[faces];
+					sections = new Rectangle[faces];
+					int ww = FULL_WIDTH / faces;
+					for (int i = 0; i < faces; i++) {
+						boundaries[i] = new Rectangle(i*ww - 3, 0, 6, FULL_HEIGHT);
+						sections[i] = new Rectangle(i*ww, 0, ww, FULL_HEIGHT);
+					}
+				}
+				break;
+			case READY_STATE:
+				boolean ok = true;
+				for (Rectangle rect : webcam.getFaces()) {
+					for (Rectangle boundary : boundaries) {
+						if (rect.intersects(boundary)) {
+							ok = false;
+							break;
+						}
+					}
+				}
+				if (ok) {
+					this.play();
+				}
+				break;
+			case GAME_STATE:
+				ArrayList<Player> players = world.getPlayers();
+				for (Rectangle rect : webcam.getFaces())  {
+					int i = 0;
+					for (Rectangle sec : sections) {
+						if (sec != null && rect != null && sec.contains(rect)) { if (players.get(i) != null) {
+							players.get(i).setRect(rect);
+						} }
+						i ++;
+					}
+				}
+				break;
+			}
+			
+			if (state < GAME_STATE && capture && frame != null) {
+				BufferedImage image = webcam.matToBufferedImage(frame);
+				panel.setFrame(image);
+			}
 			panel.repaint();
+			
+			//capture = !capture; //use camera every other step
+			
 			try {
 				Thread.sleep(REFRESH_RATE);
 			} catch (InterruptedException e) {
@@ -59,11 +150,17 @@ public class WebcamView extends JFrame implements Runnable {
 
 class WebcamPanel extends JPanel {
 	
+	private static final long serialVersionUID = 1L;
 	private int width, height;
+	private Font font;
+	
+	private World world = null;
 	
 	public WebcamPanel(int width, int height) {
 		this.width = width;
 		this.height = height;
+		
+		font = new Font("Sans-Serif", Font.PLAIN, 64);
 	}
 	
 	private BufferedImage frame = null;
@@ -79,13 +176,22 @@ class WebcamPanel extends JPanel {
 		numFaces = faces;
 	}
 	
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
 	public void paint(Graphics g) {
+		
 		Graphics2D g2 = (Graphics2D) g;
-		AffineTransform oldXform = g2.getTransform();
-        g2.scale(1f, 1f);
+		//AffineTransform oldXform = g2.getTransform();
+        //g2.scale(1f, 1f);
         
-		g.drawImage(frame, 0, 0, null);
-		Font font = new Font("Serif", Font.PLAIN, 80);
+		if (this.world != null) {
+			world.update();
+			world.paint(g);
+		} else {
+			g.drawImage(frame, 0, 0, null);
+		}
 		g2.setColor(Color.red);
 		g2.setFont(font);
 		if (numFaces <= 0)
@@ -100,6 +206,6 @@ class WebcamPanel extends JPanel {
 			}
 		}
 		
-		g2.setTransform(oldXform);
+		//g2.setTransform(oldXform);
 	}
 }
