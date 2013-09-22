@@ -9,11 +9,15 @@ public class Player extends Actor {
 	static float gravity = 0.5f;
 	private int score = 0;
 	private int playerNumber;
+	private boolean beenHit = false;
 	
 	private Rectangle prevRect, rect;
 	
 	private static int RECT_TIME = 5;
 	private int rectTimer = 0;
+	
+	private static final double MOTION_NORM = 20f;
+	private static final double MOTION_CAP = 12f;
 		
 	public Player(int x, int y, int playerNumber) {
 		super(x, y);
@@ -51,16 +55,19 @@ public class Player extends Actor {
 
 	
 	void jump() {
-		
 		if(!airbourne){
 			ySpeed = JUMP_SPEED;
-			airbourne =true;
+			airbourne = true;
+			beenHit = false;
 		}
 	}
 	
-	void collide(Obstacle obs) {
-		score -= obs.damage;
-		x -= 5;
+	void collideRight(Obstacle obs) {
+		if (!beenHit) {
+			beenHit = true;
+			score -= obs.damage;
+		}
+		x = obs.x - this.width;
 	}
 
 	/*void getCoin(Coin c) {
@@ -83,14 +90,10 @@ public class Player extends Actor {
 	public int getScore() {
 		return score;
 	}
-	
-	/*public Rectangle getPrevRect() {
-		return prevRect;
+
+	public void addScore(int i) {
+		score += i;
 	}
-	
-	public void setPrevRect(Rectangle rect) {
-		prevRect = rect;
-	}*/
 	
 	public void clearRect() {
 		prevRect = null;
@@ -107,7 +110,15 @@ public class Player extends Actor {
 		this.rect = rect;
 	}
 	
-	public float getYMotion() {
-		return 0.0f;
+	public double getYMotion() {
+		double m = 0f;
+		if (rect != null && prevRect != null) {
+			m = (rect.getCenterY() - prevRect.getCenterY())/MOTION_NORM;
+			if (Math.abs(m) > MOTION_CAP) {
+				m = 0;
+				clearRect();
+			}
+		}
+		return m;
 	}
 }

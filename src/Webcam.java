@@ -26,9 +26,12 @@ public class Webcam {
 	Rectangle[] faces = null;
 	
 	final static float TIME_SECONDS = 2f;
+	final static float TIMEOUT = 5f;
+	long initTime = -1;
 	int prevCount;
 	long time = -1;
 	boolean didFinishTime = false;
+	boolean countWentAboveOne = false;
 	
 	private int width, height;
 	
@@ -95,6 +98,18 @@ public class Webcam {
 	    	time = System.nanoTime();
 	    } else if (!didFinishTime && count > 0 && ((double)System.nanoTime() - (double)time)/1000000000.0 > TIME_SECONDS){
 	    	didFinishTime = true;
+	    }
+	    
+	    if (count > 1) {
+	    	countWentAboveOne = true;
+	    }
+	    
+	    if (initTime < 0)
+	    	initTime = System.nanoTime();
+	    
+	    if (countWentAboveOne && (System.nanoTime() - initTime)/1000000000.0 > TIMEOUT) {
+	    	didFinishTime = true;
+	    	count = prevCount = 2;
 	    }
 	    
 	    return count; // + faceDetections.toArray().length;

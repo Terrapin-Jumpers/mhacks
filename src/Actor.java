@@ -84,4 +84,8 @@ abstract class Actor {
 		return height;
 	}
 	
+	public boolean isAbove(Actor other) {
+		return this.y + this.height <= other.getY();
+	}
+	
 }

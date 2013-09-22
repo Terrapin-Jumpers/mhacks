@@ -61,7 +61,7 @@ public class WebcamView extends JFrame implements Runnable {
 	   				 webcam.getNumFaces(frame);
             		}
 	   				 try {
-	   					 Thread.sleep(REFRESH_RATE);
+	   					 Thread.sleep(REFRESH_RATE*2);
 	   				 } catch (InterruptedException e) {
 	   				 }
             	}
@@ -121,9 +121,9 @@ public class WebcamView extends JFrame implements Runnable {
 				for (Rectangle rect : webcam.getFaces())  {
 					int i = 0;
 					for (Rectangle sec : sections) {
-						if (sec != null && rect != null && sec.contains(rect)) { if (players.get(i) != null) {
+						if (sec != null && rect != null && sec.contains(rect) && i < players.size()) {
 							players.get(i).setRect(rect);
-						} }
+						} 
 						i ++;
 					}
 				}
